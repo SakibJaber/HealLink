@@ -1,4 +1,3 @@
-
 import { ConfigService } from '@nestjs/config';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { resolve } from 'path';
