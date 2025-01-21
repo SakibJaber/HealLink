@@ -1,34 +1,72 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Query,
+  BadRequestException,
+  Render,
+  Get,
+  Res,
+} from '@nestjs/common';
+import { Response } from 'express';
 import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { UsersService } from '../users/users.service';
+import { SignupDto } from './dto/signup.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly usersService: UsersService,
+  ) {}
 
-  @Post()
-  create(@Body() createAuthDto: CreateAuthDto) {
-    return this.authService.create(createAuthDto);
+  @Get('signup')
+  @Render('signup')
+  getsignup(@Res() res: Response) {
+   
   }
 
-  @Get()
-  findAll() {
-    return this.authService.findAll();
+  @Post('signup')
+  async signup(@Body() signupDto: SignupDto) {
+    return this.authService.signup(signupDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authService.findOne(+id);
+  @Get('verify')
+  @Render('verify')
+  verifyScreen() {}
+
+  @Post('verify')
+  async verify(@Body('id') id: string, @Body('token') token: string) {
+    const user = await this.usersService.findOne(+id);
+
+    if (!user) {
+      throw new BadRequestException('User not found.');
+    }
+
+    if (user.verification_token !== token) {
+      throw new BadRequestException('Invalid token');
+    }
+
+    user.email_status = 'verified';
+    user.verification_token = null;
+
+    await this.usersService.update(user.id, user);
+
+    return { message: 'Email verified successfully.' };
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-    return this.authService.update(+id, updateAuthDto);
-  }
+  // @Post('verify')
+  // async verify(@Query('id') id: string, @Query('token') token: string) {
+  //   const user = await this.usersService.findOne(+id);
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authService.remove(+id);
-  }
+  //   if (user.verification_token !== token) {
+  //     throw new BadRequestException('Invalid token');
+  //   }
+
+  //   user.email_status = 'verified';
+  //   user.verification_token = null;
+  //   await this.usersService.update(user.id, user);
+
+  //   return { message: 'Email verified successfully.' };
+  // }
 }

@@ -1,26 +1,49 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { UsersService } from '../users/users.service';
+import * as randomToken from 'random-token';
+import { SignupDto } from './dto/signup.dto';
+import { MailerService } from './mailer.service';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
-  }
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly mailerService: MailerService,
+  ) {}
 
-  findAll() {
-    return `This action returns all auth`;
-  }
+  // async signup(signupDto: SignupDto) {
+  //   const { username, email, password } = signupDto;
+  //   const token = randomToken(8); // Generate a random 8-character token
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+  //   const user = await this.usersService.create({
+  //     username,
+  //     email,
+  //     password,
+  //     verification_token: token,
+  //   });
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
+  //   await this.mailerService.sendVerificationEmail(username, email, user.id, token);
+  //   return { message: 'Check your email for verification instructions.' };
+  // }
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+  async signup(signupDto: SignupDto) {
+    const { username, email, password } = signupDto;
+    const token = randomToken(8);
+  
+    // Pass everything except verification_token to create the user
+    const user = await this.usersService.create({
+      username,
+      email,
+      password,
+      // Do not pass verification_token here
+    });
+  
+    // Handle setting the verification_token directly in the service or repository
+    user.verification_token = token;
+    await this.usersService.update(user.id, user); // Save the token in the DB
+    
+    await this.mailerService.sendVerificationEmail(username, email, user.id, token);
+    return { message: 'Check your email for verification instructions.' };
   }
+  
 }

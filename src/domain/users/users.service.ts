@@ -1,10 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
-import { UserEntity } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserEntity } from './entities/user.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -14,16 +19,24 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<UserEntity> {
-    const hashedPassword = await bcrypt.hash(createUserDto.password, 10); // Hash the password with a salt round of 10
+    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
     const user = this.userRepository.create({
       ...createUserDto,
-      password: hashedPassword, // Replace the plain text password with the hashed password
+      password: hashedPassword,
     });
-    return await this.userRepository.save(user);
+
+    try {
+      return await this.userRepository.save(user);
+    } catch (error) {
+      if (error.code === '23505') {
+        throw new ConflictException('Email already exists');
+      }
+      throw new InternalServerErrorException('An unexpected error occurred');
+    }
   }
 
   async findAll(): Promise<UserEntity[]> {
-    return await this.userRepository.find();
+    return this.userRepository.find();
   }
 
   async findOne(id: number): Promise<UserEntity> {
@@ -36,11 +49,18 @@ export class UsersService {
     const user = await this.findOne(id);
 
     if (updateUserDto.password) {
-      updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10); // Hash password if it is being updated
+      updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
     }
 
-    Object.assign(user, updateUserDto);
-    return await this.userRepository.save(user);
+    try {
+      Object.assign(user, updateUserDto);
+      return await this.userRepository.save(user);
+    } catch (error) {
+      if (error.code === '23505') {
+        throw new ConflictException('Email already exists');
+      }
+      throw error;
+    }
   }
 
   async remove(id: number): Promise<void> {

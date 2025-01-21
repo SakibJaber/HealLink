@@ -2,19 +2,38 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
-import { ValidationPipe } from '@nestjs/common';
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  // Set the views directory
-  app.setBaseViewsDir(join(__dirname, '..', 'views'));
-  app.useStaticAssets(join(__dirname, '..', 'public'));
+  // Use Global Validation Pipe
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      exceptionFactory: (errors) => {
+        console.log(errors); // Log validation errors
+        return new BadRequestException(errors);
+      },
+    }),
+  );
 
-  // Set the view engine to EJS
-  app.setViewEngine('ejs');
+    // // Set Global Prefix
+    // const globalPrefix = 'api/v1';
+    // app.setGlobalPrefix(globalPrefix);
+  
 
-  app.useGlobalPipes(new ValidationPipe());
-  await app.listen(3000);
+  app.useStaticAssets(join(__dirname, '..', '..', 'public')); // Serve static files
+  app.setBaseViewsDir(join(__dirname, '..', '..', 'views')); // Set the views directory
+  app.setViewEngine('ejs'); // Set the view engine to EJS
+
+  console.log('Views Directory:', join(__dirname,'..', '..', 'public'));
+  const port = process.env.PORT || 3000;
+
+  // Start listening on the determined port
+  await app.listen(port);
+
+  // Log the actual port in use
+  console.log(`SERVER IS RUNNING ON PORT ${port}`);
 }
 bootstrap();

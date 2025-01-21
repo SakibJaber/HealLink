@@ -12,7 +12,11 @@ export class CreateUserDto {
   @Length(6, 255)
   password: string;
 
+  @IsString()
   @IsOptional()
-  @IsBoolean()
-  email_status?: boolean;
+  email_status?: string;
+
+  @IsOptional()
+  verification_token?: string;
 }
+    

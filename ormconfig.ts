@@ -11,7 +11,7 @@ export const typeormAsyncConfig = {
     const database = configService.get<string>('DB_NAME');
 
     console.log(
-      `Connecting to PostgreSQL Database: ${database} at ${host}:${port} with user ${username}`,
+      `CONNECTING TO POSTGRESQL DATABASE : ${database} at ${host}:${port} `,
     );
 
     return {
@@ -22,7 +22,7 @@ export const typeormAsyncConfig = {
       password,
       database,
       // entities: [resolve(__dirname, 'dist/domain/**/entity/*.js')],
-      entities: [resolve(__dirname, '**/entity/*.js')],
+      entities: [resolve(__dirname, '**/entities/*.js')],
       migrations: [resolve(__dirname, 'dist/migrations/*.js')],
       synchronize: true, // Keep it false if you are using migrations
       logging: false,

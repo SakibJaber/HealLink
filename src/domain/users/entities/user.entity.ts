@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -18,11 +19,15 @@ export class UserEntity {
   @Column({ type: 'varchar', length: 255, unique: true })
   email: string;
 
+  @Exclude()
   @Column({ type: 'varchar', length: 255 })
   password: string;
 
-  @Column({ type: 'boolean', default: false })
-  email_status: boolean;
+  @Column({ type: 'varchar', length: 255, default: 'not_verified' })
+  email_status: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  verification_token: string;
 
   @CreateDateColumn()
   createdAt: Timestamp;
