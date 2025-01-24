@@ -10,7 +10,9 @@ async function bootstrap() {
   // Use Global Validation Pipe
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true,
+      whitelist: true, // Remove fields not in DTO
+      // forbidNonWhitelisted: false, // Prevent extra fields
+      // transform: false, // Auto-transform to DTO classes
       exceptionFactory: (errors) => {
         console.log(errors); // Log validation errors
         return new BadRequestException(errors);

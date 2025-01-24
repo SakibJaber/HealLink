@@ -20,6 +20,7 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto): Promise<UserEntity> {
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+    console.log('Hashed Password (Before Save):', hashedPassword);
     const user = this.userRepository.create({
       ...createUserDto,
       password: hashedPassword,
@@ -45,12 +46,23 @@ export class UsersService {
     return user;
   }
 
+  // async findByEmail(email: string) {
+  //   return await this.userRepository.findOneBy({ email });
+  // }
+
+  async findByEmail(email: string): Promise<UserEntity> {
+    return this.userRepository.findOne({
+      where: { email },
+      select: ['password', 'email', 'username', 'email_status'],
+    });
+  }
+
   async update(id: number, updateUserDto: UpdateUserDto): Promise<UserEntity> {
     const user = await this.findOne(id);
 
-    if (updateUserDto.password) {
-      updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
-    }
+    // if (updateUserDto.password) {
+    //   updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
+    // }
 
     try {
       Object.assign(user, updateUserDto);

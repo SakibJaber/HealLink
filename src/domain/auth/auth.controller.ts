@@ -12,6 +12,7 @@ import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
 import { SignupDto } from './dto/signup.dto';
+import { LoginDto } from './dto/login.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -22,8 +23,26 @@ export class AuthController {
 
   @Get('signup')
   @Render('signup')
-  getsignup(@Res() res: Response) {
-   
+  getsignup(@Res() res: Response) {}
+  @Get('login')
+  @Render('login')
+  getlogin(@Res() res: Response) {}
+
+  @Get('reset-password')
+  @Render('resetpassword')
+  getResetpass(@Res() res: Response) {}
+
+  @Post('login')
+  async login(@Body() loginDto: LoginDto) {
+    try {
+      const result = await this.authService.login(loginDto);
+      return {
+        message: 'Login successful',
+        ...result, // Spread token data
+      };
+    } catch (error) {
+      throw new BadRequestException(error.message || 'Failed to login');
+    }
   }
 
   @Post('signup')
@@ -54,19 +73,4 @@ export class AuthController {
 
     return { message: 'Email verified successfully.' };
   }
-
-  // @Post('verify')
-  // async verify(@Query('id') id: string, @Query('token') token: string) {
-  //   const user = await this.usersService.findOne(+id);
-
-  //   if (user.verification_token !== token) {
-  //     throw new BadRequestException('Invalid token');
-  //   }
-
-  //   user.email_status = 'verified';
-  //   user.verification_token = null;
-  //   await this.usersService.update(user.id, user);
-
-  //   return { message: 'Email verified successfully.' };
-  // }
 }

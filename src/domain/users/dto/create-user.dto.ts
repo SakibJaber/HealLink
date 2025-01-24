@@ -1,15 +1,21 @@
-import { IsString, IsEmail, IsBoolean, Length, IsOptional } from 'class-validator';
+import {
+  IsString,
+  IsEmail,
+  IsOptional,
+  IsNotEmpty,
+  MinLength,
+} from 'class-validator';
 
 export class CreateUserDto {
   @IsString()
-  @Length(1, 255)
+  @IsNotEmpty()
   username: string;
 
   @IsEmail()
   email: string;
 
-  @IsString()
-  @Length(6, 255)
+  @IsNotEmpty()
+  @MinLength(6)
   password: string;
 
   @IsString()
@@ -19,4 +25,3 @@ export class CreateUserDto {
   @IsOptional()
   verification_token?: string;
 }
-    
