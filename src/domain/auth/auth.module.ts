@@ -4,10 +4,10 @@ import { AuthController } from './auth.controller';
 import { UsersModule } from '../users/users.module';
 import { MailerService } from './mailer.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserEntity } from '../users/entities/user.entity';
+import { PasswordReset } from './entities/auth.entity';
 
 @Module({
-  imports: [ TypeOrmModule.forFeature([UserEntity]), UsersModule],
+  imports: [TypeOrmModule.forFeature([PasswordReset]), UsersModule],
   controllers: [AuthController],
   providers: [AuthService, MailerService],
 })
