@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
+import * as express from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -20,16 +21,16 @@ async function bootstrap() {
     }),
   );
 
-    // // Set Global Prefix
-    // const globalPrefix = 'api/v1';
-    // app.setGlobalPrefix(globalPrefix);
-  
+  // // Set Global Prefix
+  // const globalPrefix = 'api/v1';
+  // app.setGlobalPrefix(globalPrefix);
 
-  app.useStaticAssets(join(__dirname, '..', '..', 'public')); // Serve static files
-  app.setBaseViewsDir(join(__dirname, '..', '..', 'views')); // Set the views directory
+  app.use('/uploads', express.static(join(process.cwd(), 'uploads')));  // Serve 'uploads' folder
+  app.useStaticAssets(join(process.cwd(), 'public')); // Serve static files
+  app.setBaseViewsDir(join(process.cwd(), 'views')); // Set the views directory
   app.setViewEngine('ejs'); // Set the view engine to EJS
 
-  console.log('Views Directory:', join(__dirname,'..', '..', 'public'));
+  console.log('Views Directory:', join(__dirname, '..', '..', 'public'));
   const port = process.env.PORT || 3000;
 
   // Start listening on the determined port

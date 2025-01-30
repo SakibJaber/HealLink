@@ -6,8 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeormAsyncConfig } from 'ormconfig';
 import { DomainModule } from './domain/domain.module';
 import * as session from 'express-session';
-
-
+import { MulterModule } from '@nestjs/platform-express';
 
 const ENV = process.env.NODE_ENV;
 @Module({
@@ -19,7 +18,13 @@ const ENV = process.env.NODE_ENV;
       // load: [appConfig],
     }),
     TypeOrmModule.forRootAsync(typeormAsyncConfig), // Async TypeORM config
-    DomainModule, 
+    MulterModule.register({
+      dest: './uploads',
+      limits: {
+        fileSize: 5 * 1024 * 1024, // 5MB limit
+      },
+    }),
+    DomainModule,
   ],
   controllers: [AppController],
   providers: [AppService],
@@ -41,4 +46,3 @@ export class AppModule {
       .forRoutes('*');
   }
 }
-
