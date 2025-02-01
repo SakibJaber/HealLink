@@ -67,7 +67,6 @@ export class DoctorsController {
     return await this.doctorService.update(id, updateDoctorDto);
   }
 
-
   // Delete a doctor by ID
   @Delete(':id')
   async delete(@Param('id') id: number): Promise<{ message: string }> {

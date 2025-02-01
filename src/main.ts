@@ -30,7 +30,6 @@ async function bootstrap() {
   app.setBaseViewsDir(join(process.cwd(), 'views')); // Set the views directory
   app.setViewEngine('ejs'); // Set the view engine to EJS
 
-  console.log('Views Directory:', join(__dirname, '..', '..', 'public'));
   const port = process.env.PORT || 3000;
 
   // Start listening on the determined port
