@@ -29,15 +29,20 @@ export class LeaveService {
     return leave;
   }
 
-  async update(id: number, updateLeaveDto: UpdateLeaveDto): Promise<LeaveEntity> {
+  async update(
+    id: number,
+    updateLeaveDto: UpdateLeaveDto,
+  ): Promise<LeaveEntity> {
     await this.leaveRepository.update(id, updateLeaveDto);
     return this.findOne(id);
   }
 
-  async remove(id: number): Promise<void> {
-    const result = await this.leaveRepository.delete(id);
-    if (result.affected === 0) {
-      throw new NotFoundException(`Leave with ID ${id} not found`);
+  async remove(id: number): Promise<any> {
+    const leave = await this.leaveRepository.findOne({ where: { id } });
+    if (!leave) {
+      throw new Error('Leave not found');
     }
+    await this.leaveRepository.remove(leave);
+    return leave; 
   }
 }

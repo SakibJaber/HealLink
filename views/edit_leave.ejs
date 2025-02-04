@@ -124,7 +124,6 @@
                </div>
             </div>
          </div>
-         <!-- SIDEBAR -->
          <div class="sidebar" id="sidebar">
             <div class="sidebar-inner slimscroll">
                <div id="sidebar-menu" class="sidebar-menu">
@@ -175,117 +174,77 @@
          <div class="page-wrapper">
             <div class="content">
                <div class="row">
-                  <div class="col-sm-4 col-3">
-                     <h4 class="page-title">Employee</h4>
-                  </div>
-                  <div class="col-sm-8 col-9 text-right m-b-20">
-                     <a href="/employee/add" class="btn btn-primary float-right btn-rounded"><i class="fa fa-plus"></i> Add Employee</a>
+                  <div class="col-lg-8 offset-lg-2">
+                     <h4 class="page-title">Edit Leave</h4>
                   </div>
                </div>
-               <!-- SEARCH -->
-               <form  action="/employee/search" method="POST">
-                  <div class="row filter-row">
-                     <div class="col-sm-6 col-md-3">
-                        <div class="form-group form-focus">
-                           <label class="focus-label">Employee Name / ID </label>
-                           <input type="text" class="form-control floating" name="search">
-                        </div>
-                     </div>
-                     <div class="col-sm-6 col-md-3">
-                        <button type="submit" class="btn btn-success btn-block">Search</button>
-                     </div>
+               <div class="row">
+                  <div class="col-lg-8 offset-lg-2">
+<!-- NEW -->
+
+
+
+<% if (leave) { %>
+    <form method="POST" action="/leave/<%= leave.id %>" onsubmit="submitForm(event)">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Employee Name <span class="text-danger">*</span></label>
+                    <input class="form-control" type="text" name="name" value="<%= leave.employee %>">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Employee Id <span class="text-danger">*</span></label>
+                    <input class="form-control" type="text" name="id" value="<%= leave.emp_id %>" readonly>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Leave Type <span class="text-danger">*</span></label>
+            <select class="form-control" name="leave_type">
+                <option>Select Leave Type</option>
+                <option value="Casual Leave" <%= leave.leave_type === 'Casual Leave' ? 'selected' : '' %>>Casual Leave</option>
+                <option value="Medical Leave" <%= leave.leave_type === 'Medical Leave' ? 'selected' : '' %>>Medical Leave</option>
+            </select>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>From <span class="text-danger">*</span></label>
+                    <div class="cal-icon">
+                        <input class="form-control datetimepicker" type="text" name="from" value="<%= leave.date_from %>">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>To <span class="text-danger">*</span></label>
+                    <div class="cal-icon">
+                        <input class="form-control datetimepicker" type="text" name="to" value="<%= leave.date_to %>">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Leave Reason <span class="text-danger">*</span></label>
+            <textarea rows="4" cols="5" class="form-control" name="reason"><%= leave.reason %></textarea>
+        </div>
+        <div class="m-t-20 text-center">
+            <button class="btn btn-primary submit-btn">Update Leave</button>
+        </div>
+    </form>
+    <% } else { %>
+    <h3 class="text-danger">No leave record found.</h3>
+    <% } %>
+    
+
+
+
+<!-- OLD -->
+                    
                   </div>
-               </form>
-               <!-- START -->
-               <!-- Show All Employees Only If Not Searching -->
-               <% if (employees) { %>
-               <h3>All Employees</h3>
-               <table class="table">
-                  <thead>
-                     <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Contact</th>
-                        <th>Join Date</th>
-                        <th>Role</th>
-                        <th class="text-right">Actions</th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                     <% if (employees.length > 0) { %>
-                     <% for (var i = 0; i < employees.length; i++) { %>
-                     <tr>
-                        <td><%= employees[i].id %></td>
-                        <td><%= employees[i].name %></td>
-                        <td><%= employees[i].email %></td>
-                        <td><%= employees[i].contact %></td>
-                        <td><%= employees[i].join_date %></td>
-                        <td><%= employees[i].role %></td>
-                        <td class="text-right">
-                           <div class="dropdown dropdown-action">
-                              <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
-                              <div class="dropdown-menu dropdown-menu-right">
-                                 <a class="dropdown-item" href="/employee/edit/<%= employees[i].id %>"><i class="fa fa-pencil m-r-5"></i> Edit</a>
-                                 <a class="dropdown-item" href="/employee/delete/<%= employees[i].id %>" ><i class="fa fa-trash-o m-r-5"></i> Delete</a>
-                              </div>
-                           </div>
-                        </td>
-                     </tr>
-                     <% } %>
-                     <% } else { %>
-                     <tr>
-                        <td colspan="6" class="text-center">No employees found</td>
-                     </tr>
-                     <% } %>
-                  </tbody>
-               </table>
-               <% } %>
-               <!-- Show Search Results If Available -->
-               <% if (employee) { %>
-               <h3>Search Results</h3>
-               <table class="table table-striped custom-table">
-                  <thead>
-                     <tr>
-                        <th style="min-width:100px;">ID</th>
-                        <th>Employee Name</th>
-                        <th>Email</th>
-                        <th>Contact</th>
-                        <th style="min-width: 110px;">Join Date</th>
-                        <th>Role</th>
-                        <th class="text-right">Action</th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                     <% if (employee.length > 0) { %>
-                     <% for (var i = 0; i < employee.length; i++){ %>
-                     <tr>
-                        <td><%= employee[i].id %></td>
-                        <td><%= employee[i].name %></td>
-                        <td><%= employee[i].email %></td>
-                        <td><%= employee[i].contact %></td>
-                        <td><%= employee[i].join_date %></td>
-                        <td><%= employee[i].role %></td>
-                        <td class="text-right">
-                           <div class="dropdown dropdown-action">
-                              <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
-                              <div class="dropdown-menu dropdown-menu-right">
-                                 <a class="dropdown-item" href="/employee/edit/<%= employee[i].id %>"><i class="fa fa-pencil m-r-5"></i> Edit</a>
-                                 <a class="dropdown-item" href="/employee/delete/<%= employee[i].id %>" ><i class="fa fa-trash-o m-r-5"></i> Delete</a>
-                              </div>
-                           </div>
-                        </td>
-                     </tr>
-                     <% } %>
-                     <% } else { %>
-                     <tr>
-                        <td colspan="6" class="text-center">No employees found</td>
-                     </tr>
-                     <% } %>
-                  </tbody>
-               </table>
-               <% } %>
-               <!-- END -->
+               </div>
             </div>
             <div class="notification-box">
                <div class="msg-sidebar notifications msg-noti">
@@ -497,37 +456,39 @@
                </div>
             </div>
          </div>
-         <div id="delete_employee" class="modal fade delete-modal" role="dialog">
-            <% /* %>
-            <% for (var i = 0; i < employee.length; i++){ %>
-            <form action="/employee/delete_employee/<%=employee[i].id%>" method="post">
-               <% } %>
-               <% */ %>
-               <div class="modal-dialog modal-dialog-centered">
-                  <div class="modal-content">
-                     <div class="modal-body text-center">
-                        <img src="/assets/img/sent.png" alt="" width="50" height="46">
-                        <h3>Are you sure want to delete this Employee?</h3>
-                        <div class="m-t-20"> <a href="#" class="btn btn-white" data-dismiss="modal">Close</a>
-                           <button type="submit" class="btn btn-danger">Delete</button>
-                        </div>
-                     </div>
-                  </div>
-               </div>
-            </form>
-         </div>
       </div>
       <div class="sidebar-overlay" data-reff=""></div>
       <script src="/assets/js/jquery-3.2.1.min.js"></script>
       <script src="/assets/js/popper.min.js"></script>
       <script src="/assets/js/bootstrap.min.js"></script>
-      <script src="/assets/js/jquery.dataTables.min.js"></script>
-      <script src="/assets/js/dataTables.bootstrap4.min.js"></script>
       <script src="/assets/js/jquery.slimscroll.js"></script>
       <script src="/assets/js/select2.min.js"></script>
       <script src="/assets/js/moment.min.js"></script>
       <script src="/assets/js/bootstrap-datetimepicker.min.js"></script>
       <script src="/assets/js/app.js"></script>
+      <script>
+        function submitForm(event) {
+          event.preventDefault();
+          const form = event.target;
+          const formData = new FormData(form);
+          
+          fetch(form.action, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(Object.fromEntries(formData))
+          }).then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                alert("Leave updated successfully!");
+                window.location.href = "/leave"; // Redirect after update
+              } else {
+                alert("Failed to update leave.");
+              }
+            }).catch(error => console.error(error));
+        }
+      </script>
    </body>
-   <!-- employees23:22-->
+   <!-- add-leave24:07-->
 </html>

@@ -6,11 +6,11 @@ import { Response } from 'express';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get('')
-  @Render('home')
-  employee() {
-    return { home: [] }; // Ensure 'employee' is always defined
-  }
+  // @Get('')
+  // @Render('home')
+  // employee() {
+  //   return { home: [] }; // Ensure 'employee' is always defined
+  // }
 
   @Get('/hello')
   getsignup() {

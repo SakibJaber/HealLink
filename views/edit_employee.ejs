@@ -202,59 +202,58 @@
                 </div>
                 <div class="row">
                     <div class="col-lg-8 offset-lg-2">
-                        <form method="POST">
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <% for (var i = 0; i < list.length; i++){ %>
-                                        <label> Name <span class="text-danger">*</span></label>
-                                        <input class="form-control" type="text" name="name" value="<%= list[i].name %>">
+                        <% if (employee) { %>
+                            <form method="POST" action="/employee/<%= employee.id %>?_method=PATCH" onsubmit="submitForm(event)">
+                                <input type="hidden" name="_method" value="PATCH">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Name <span class="text-danger">*</span></label>
+                                            <input class="form-control" type="text" name="name" value="<%= employee.name %>">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Email</label>
+                                            <input class="form-control" type="email" name="email" value="<%= employee.email %>">
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label>Email</label>
-                                        <input class="form-control" type="email" name="email" value="<%= list[i].email %>">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Contact <span class="text-danger">*</span></label>
+                                            <input class="form-control" type="text" name="contact" value="<%= employee.contact %>">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Join Date <span class="text-danger">*</span></label>
+                                            <input class="form-control" type="date" id="join_date" name="join_date">
+
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label> Contact <span class="text-danger">*</span></label>
-                                        <input class="form-control" type="text" name="contact" value="<%= list[i].contact %>" >
-                                    </div>
+                                <div class="form-group">
+                                    <label>Role</label>
+                                    <select class="form-control" name="role">
+                                        <option value="Nurse" <%= employee.role === 'Nurse' ? 'selected' : '' %>>Nurse</option>
+                                        <option value="Laboratorist" <%= employee.role === 'Laboratorist' ? 'selected' : '' %>>Laboratorist</option>
+                                        <option value="Pharmacist" <%= employee.role === 'Pharmacist' ? 'selected' : '' %>>Pharmacist</option>
+                                        <option value="Accountant" <%= employee.role === 'Accountant' ? 'selected' : '' %>>Accountant</option>
+                                        <option value="Receptionist" <%= employee.role === 'Receptionist' ? 'selected' : '' %>>Receptionist</option>
+                                    </select>
                                 </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label>Join Date <span class="text-danger">*</span></label>
-                                        <input class="form-control" type="text" name="date" value="<%= list[i].join_date %>">
-                                    </div>
+                                <div class="m-t-20 text-center">
+                                    <button class="btn btn-primary submit-btn">Update Employee</button>
                                 </div>
-                                
-                                
-                               
-                               
-                               
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label>Role</label>
-                                        <select class="select" name="role" value="<%= list[i].role %>">
-                                            
-                                            <option value="Nurse">Nurse</option>
-                                            <option value="Laboratorist">Laboratorist</option>
-                                            <option value="Pharmacist">Pharmacist</option>
-                                            <option value="Accountant">Accountant</option>
-                                            <option value="Receptionist">Receptionist</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <% } %>
-                            <div class="m-t-20 text-center">
-                                <button class="btn btn-primary submit-btn">Update Employee</button>
-                            </div>
-                        </form>
+                            </form>
+                        <% } else { %>
+                            <h3 class="text-danger">No employee record found.</h3>
+                        <% } %>
+                        
                     </div>
-                </div>
+                </div>                
             </div>
 			<div class="notification-box">
                 <div class="msg-sidebar notifications msg-noti">
@@ -476,7 +475,52 @@
     <script src="/assets/js/app.js"></script>
 	<script src="/assets/js/moment.min.js"></script>
 	<script src="/assets/js/bootstrap-datetimepicker.min.js"></script>
-	
+    <script>
+        function submitForm(event) {
+          event.preventDefault();
+          const form = event.target;
+          fetch(form.action, {
+            method: 'PATCH', 
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(Object.fromEntries(new FormData(form))),
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              alert('Employee updated successfully!');
+              window.location.reload();
+            } else {
+              alert('Failed to update employee');
+            }
+          })
+          .catch(error => {
+            console.error(error);
+            alert('Error updating employee');
+          });
+        }
+      </script>
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const joinDateInput = document.getElementById("join_date");
+        
+            joinDateInput.addEventListener("change", function () {
+                if (this.value) {
+                    const selectedDate = new Date(this.value); // Convert input value to Date object
+                    const isoString = selectedDate.toISOString(); // Convert to ISO format
+                    console.log("ISO Date:", isoString);
+                }
+            });
+        
+            // If you're pre-populating the date from a server-side value
+            const serverDate = "<%= employee.join_date %>"; // Example: "2025-02-04T00:00:00.000Z"
+            if (serverDate) {
+                const formattedDate = new Date(serverDate).toISOString().split("T")[0]; // Extract YYYY-MM-DD
+                joinDateInput.value = formattedDate;
+            }
+        });
+        </script>
+        
+      
 </body>
 
 

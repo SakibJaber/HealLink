@@ -82,6 +82,7 @@ export class AuthService {
     );
     return { message: 'Check your email for verification instructions.' };
   }
+  
 
   async logout(req: Request): Promise<{ message: string }> {
     return new Promise((resolve, reject) => {

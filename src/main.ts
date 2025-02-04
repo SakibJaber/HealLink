@@ -4,10 +4,12 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import * as express from 'express';
+import * as methodOverride from 'method-override';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
+  app.use(methodOverride('_method'));
   // Use Global Validation Pipe
   app.useGlobalPipes(
     new ValidationPipe({
