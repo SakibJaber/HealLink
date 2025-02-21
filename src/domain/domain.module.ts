@@ -5,6 +5,7 @@ import { DoctorsModule } from './doctors/doctors.module';
 import { EmployeeModule } from './employee/employee.module';
 import { LeaveModule } from './leave/leave.module';
 import { AppointmentModule } from './appointment/appointment.module';
+import { StoreModule } from './store/store.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { AppointmentModule } from './appointment/appointment.module';
     EmployeeModule,
     LeaveModule,
     AppointmentModule,
+    StoreModule
   ],
   controllers: [],
   providers: [],
