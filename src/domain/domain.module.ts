@@ -6,6 +6,8 @@ import { EmployeeModule } from './employee/employee.module';
 import { LeaveModule } from './leave/leave.module';
 import { AppointmentModule } from './appointment/appointment.module';
 import { StoreModule } from './store/store.module';
+import { DepartmentModule } from './department/department.module';
+import { ComplainModule } from './complaint/complaint.module';
 
 @Module({
   imports: [
@@ -15,7 +17,9 @@ import { StoreModule } from './store/store.module';
     EmployeeModule,
     LeaveModule,
     AppointmentModule,
-    StoreModule
+    StoreModule,
+    DepartmentModule,
+    ComplainModule
   ],
   controllers: [],
   providers: [],
